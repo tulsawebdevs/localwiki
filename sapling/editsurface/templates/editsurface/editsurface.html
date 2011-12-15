@@ -1,0 +1,227 @@
+{% load static from staticfiles %}
+<div id="initial_value" style="display: none">
+    {{ value|safe }}
+</div>
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.SurfaceView.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.ContextView.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.ContentView.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.DocumentView.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.Inspector.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.ToolbarView.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/es/styles/es.MenuView.css" %}">
+<link rel="stylesheet" href="{% static "VisualEditor/modules/sandbox/sandbox.css" %}">
+<style>
+    body {
+        font-family: "Arial";
+        font-size: 1em;
+        width: 100%;
+        margin: 1em 0;
+        padding: 0;
+        overflow-y: scroll;
+        background-color: white;
+    }
+    #es-base {
+        margin: 2em;
+        margin-top: 0em;
+        -webkit-box-shadow: 0 0.25em 1.5em 0 #dddddd;
+        -moz-box-shadow: 0 0.25em 1.5em 0 #dddddd;
+        box-shadow: 0 0.25em 1.5em 0 #dddddd;
+        -webkit-border-radius: 0.5em;
+        -moz-border-radius: 0.5em;
+        -o-border-radius: 0.5em;
+        border-radius: 0.5em;
+    }
+    #es-panes {
+        border: solid 1px #cccccc;
+        border-top: none;
+    }
+    #es-visual {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+    #es-toolbar {
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        -o-border-radius: 0;
+        border-radius: 0;
+        -webkit-border-top-right-radius: 0.25em;
+        -moz-border-top-right-radius: 0.25em;
+        -o-border-top-right-radius: 0.25em;
+        border-top-right-radius: 0.25em;
+        -webkit-border-top-left-radius: 0.25em;
+        -moz-border-top-left-radius: 0.25em;
+        -o-border-top-left-radius: 0.25em;
+        border-top-left-radius: 0.25em;
+    }
+    #es-toolbar.float {
+        left: 2em;
+        right: 2em;
+        top: 0;
+    }
+    #es-docs {
+        margin-left: 2.5em;
+    }
+</style>
+<!-- VisualEditor Sandbox -->
+<div id="es-base" style="visibility: hidden">
+    <div id="es-toolbar-wrapper">
+        <div id="es-toolbar" class="es-toolbar">
+            <div id="es-modes" class="es-modes">
+                <div id="es-mode-wikitext" class="es-modes-button" title="Toggle wikitext view"></div>
+                <div id="es-mode-json" class="es-modes-button" title="Toggle JSON view"></div>
+                <div id="es-mode-html" class="es-modes-button" title="Toggle HTML view"></div>
+                <div id="es-mode-render" class="es-modes-button" title="Toggle preview"></div>
+                <div id="es-mode-history" class="es-modes-button" title="Toggle transaction history view"></div>
+                <div id="es-mode-help" class="es-modes-button" title="Toggle help view"></div>
+            </div>
+            <div style="clear:both"></div>
+            <div id="es-toolbar-shadow"></div>
+        </div>
+    </div>
+    <div id="es-panes">
+        <div id="es-visual">
+            <div id="es-editor"></div>
+        </div>
+        <div id="es-panels">
+            <div id="es-panel-wikitext" class="es-panel es-code"></div>
+            <div id="es-panel-json" class="es-panel es-code"></div>
+            <div id="es-panel-html" class="es-panel es-code"></div>
+            <div id="es-panel-render" class="es-panel es-render"></div>
+            <div id="es-panel-history" class="es-panel es-code"></div>
+            <div id="es-panel-help" class="es-panel">
+                <div class="es-help-title">
+                    Keyboard Shortcuts
+                </div>
+                <div class="es-help-shortcuts-title">
+                    Clipboard
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">C</span> </span>
+                    Copy selected text
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">X</span> </span>
+                    Cut selected text
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">V</span> </span>
+                    Paste text at the cursor
+                </div>
+                <div class="es-help-shortcuts-title">
+                    History navigation
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">Z</span> </span>
+                    Undo
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">Y</span> </span>
+                    Redo
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">&#8679;</span> + <span class="es-help-key">Z</span> </span>
+                    Redo
+                </div>
+                <div class="es-help-shortcuts-title">
+                    Formatting
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">B</span> </span>
+                    Make selected text bold
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">I</span> </span>
+                    Make selected text italic
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#8984;</span> + <span class="es-help-key">K</span> </span>
+                    Make selected text a link
+                </div>
+                <div class="es-help-shortcuts-title">
+                    Selection
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">&#8679;</span> + <span class="es-help-key">Arrow</span> </span>
+                    Adjust selection
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#x2325;</span> + <span class="es-help-key">Arrow</span> </span>
+                    Move cursor by words or blocks
+                </div>
+                <div class="es-help-shortcut">
+                    <span class="es-help-keys"> <span class="es-help-key">Ctrl <span class="es-help-key-or">or</span> &#x2325;</span> + <span class="es-help-key">&#8679;</span> + <span class="es-help-key">Arrow</span> </span>
+                    Adjust selection by words or blocks
+                </div>
+            </div>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+<!-- /VisualEditor Sandbox -->
+<!-- EditSurface -->
+<script src="{% static "VisualEditor/modules/jquery/jquery.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/es.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/es.Html.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/es.Position.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/es.Range.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/es.TransactionProcessor.js" %}"></script>
+<!-- Serializers -->
+<script src="{% static "VisualEditor/modules/es/serializers/es.AnnotationSerializer.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/serializers/es.HtmlSerializer.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/serializers/es.JsonSerializer.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/serializers/es.WikitextSerializer.js" %}"></script>
+<!-- Bases -->
+<script src="{% static "VisualEditor/modules/es/bases/es.EventEmitter.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentModelNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentBranchNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentLeafNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentModelBranchNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentModelLeafNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentViewNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentViewBranchNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.DocumentViewLeafNode.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.Inspector.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/bases/es.Tool.js" %}"></script>
+<!-- Models -->
+<script src="{% static "VisualEditor/modules/es/models/es.SurfaceModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.DocumentModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.ParagraphModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.PreModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.ListModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.ListItemModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.TableModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.TableRowModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.TableCellModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.HeadingModel.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/models/es.TransactionModel.js" %}"></script>
+<!-- Inspectors -->
+<script src="{% static "VisualEditor/modules/es/inspectors/es.LinkInspector.js" %}"></script>
+<!-- Tools -->
+<script src="{% static "VisualEditor/modules/es/tools/es.ButtonTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.AnnotationButtonTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.ClearButtonTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.HistoryButtonTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.ListButtonTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.IndentationButtonTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.DropdownTool.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/tools/es.FormatDropdownTool.js" %}"></script>
+<!-- Views -->
+<script src="{% static "VisualEditor/modules/es/views/es.SurfaceView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.ToolbarView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.ContentView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.ContextView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.DocumentView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.ParagraphView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.PreView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.ListView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.MenuView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.ListItemView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.TableView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.TableRowView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.TableCellView.js" %}"></script>
+<script src="{% static "VisualEditor/modules/es/views/es.HeadingView.js" %}"></script>
+<!-- Demo -->
+<script src="{% static "VisualEditor/modules/sandbox/sandbox.js" %}"></script>
+<!-- Parsers and converters -->
+<script src="{% static "VisualEditor/modules/parser/mediawiki.DOMConverter.js" %}"></script>
