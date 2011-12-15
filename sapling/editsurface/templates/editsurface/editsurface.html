@@ -225,3 +225,13 @@
 <script src="{% static "VisualEditor/modules/sandbox/sandbox.js" %}"></script>
 <!-- Parsers and converters -->
 <script src="{% static "VisualEditor/modules/parser/mediawiki.DOMConverter.js" %}"></script>
+<!-- Saving -->
+<script>
+    $(document).ready(function(){
+        var input = $('input[name="{{ name }}"]');
+        input.closest('form').submit(function(){
+            wikidom = window.documentModel.getPlainObject();
+            input.val(es.HtmlSerializer.stringify( wikidom ));
+        });
+    });
+</script>
