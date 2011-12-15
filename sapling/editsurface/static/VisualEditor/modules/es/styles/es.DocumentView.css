@@ -32,10 +32,10 @@
 	font-family: monospace,"Courier New";
 }
 
-.es-headingView-level1,
+/*.es-headingView-level1,
 .es-headingView-level2 {
 	border-bottom: 1px solid #AAA;
-}
+}*/
 
 .es-headingView-level1 > * {
 	font-size: 188%;
