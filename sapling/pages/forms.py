@@ -7,6 +7,7 @@ from versionutils.merging.forms import MergeMixin
 from versionutils.versioning.forms import CommentMixin
 from pages.models import Page, PageFile
 from pages.widgets import WikiEditor
+from editsurface.widgets import EditSurface
 from versionutils.diff.daisydiff.daisydiff import daisydiff_merge
 
 
@@ -19,7 +20,7 @@ class PageForm(MergeMixin, CommentMixin, forms.ModelForm):
     class Meta:
         model = Page
         fields = ('content',)
-        widgets = {'content': WikiEditor()}
+        widgets = {'content': EditSurface()}
 
     def merge(self, yours, theirs, ancestor):
         # ancestor may be None

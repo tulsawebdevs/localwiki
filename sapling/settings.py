@@ -215,6 +215,7 @@ INSTALLED_APPS = (
     'search',
     'redirects',
     'utils',
+    'editsurface',
 )
 
 LOCAL_INSTALLED_APPS = ()
