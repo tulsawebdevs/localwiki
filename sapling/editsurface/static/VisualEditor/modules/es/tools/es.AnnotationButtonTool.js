@@ -57,7 +57,7 @@ es.Tool.tools.bold = {
 	'name': 'bold',
 	'title': 'Bold (ctrl/cmd + B)',
 	'data': {
-		'annotation': { 'type': 'textStyle/bold' }
+		'annotation': { 'type': 'textStyle/strong' }
 	}
 };
 
@@ -66,7 +66,7 @@ es.Tool.tools.italic = {
 	'name': 'italic',
 	'title': 'Italic (ctrl/cmd + I)',
 	'data': {
-		'annotation': { 'type': 'textStyle/italic' }
+		'annotation': { 'type': 'textStyle/emphasize' }
 	}
 };
 

@@ -203,7 +203,7 @@ es.HtmlSerializer.prototype.transclusion = function( node ) {
 	}
 	title.push( node.title );
 	title = title.join( ':' );
-	return es.Html.makeTag( 'a', { 'href': '/wiki/' + title }, title );
+	return es.Html.makeTag( 'a', { 'href': title }, title );
 };
 
 es.HtmlSerializer.prototype.parameter = function( node ) {
@@ -236,7 +236,7 @@ es.HtmlSerializer.prototype.content = function( node ) {
 						break;
 					case 'link/internal':
 						annotationSerializer.addTags(
-							annotation.range, 'a', { 'href': '/wiki/' + annotation.data.title }
+							annotation.range, 'a', { 'href': annotation.data.title }
 						);
 						break;
 					case 'object/template':

@@ -145,10 +145,14 @@ DOMConverter.prototype._getWikiDomAnnotationType = function ( nodeName, warn ) {
 			return 'textStyle/italic';
 		case 'b':
 			return 'textStyle/bold';
+		case 'em':
+			return 'textStyle/emphasize';
+		case 'strong':
+			return 'textStyle/strong';
 		case 'span':
 			return 'textStyle/span';
 		case 'a':
-			return 'link/unknown'; // XXX: distinguish internal / external etc
+			return 'link/internal'; // XXX: distinguish internal / external etc
 		case 'template':
 			return 'object/template';
 		case 'ref':
