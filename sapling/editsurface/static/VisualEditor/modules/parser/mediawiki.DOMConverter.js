@@ -50,7 +50,7 @@ DOMConverter.prototype._getHTMLtoWikiDomHandlerInfo = function ( nodeName ) {
 			return {
 				handler: this._convertHTMLLeaf, 
 				type: 'heading',
-				attribs: nodeName.substr(1)
+				attribs: { 'level': nodeName.substr(1) }
 			};
 		case 'li':
 		case 'dt':
