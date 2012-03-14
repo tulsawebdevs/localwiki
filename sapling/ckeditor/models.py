@@ -1,8 +1,16 @@
 import os
 import re
 from StringIO import StringIO
-from lxml import etree
+#try:
+#    #from lxml import etree
+     # treebuilder = treebuilders.getTreeBuilder("lxml"),
+#except ImportError:
+#    import xml.etree.cElementTree as etree
+import xml.etree.cElementTree as etree
 import html5lib
+
+treebuilder = html5lib.treebuilders.getTreeBuilder("etree")
+
 from html5lib import sanitizer, treebuilders
 from html5lib.constants import tokenTypes
 from xml.sax.saxutils import escape, unescape
@@ -150,7 +158,7 @@ def sanitize_html_fragment(unsafe, allowed_elements=None,
     tokenizer = custom_sanitizer(allowed_elements, allowed_attributes_map,
                                allowed_styles_map)
     p = html5lib.HTMLParser(
-        tree=treebuilders.getTreeBuilder("lxml"),
+        tree=treebuilder,
         tokenizer=tokenizer,
         namespaceHTMLElements=False
     )
@@ -159,9 +167,15 @@ def sanitize_html_fragment(unsafe, allowed_elements=None,
     container = etree.Element('div')
     if top_level_elements and not hasattr(top_level_elements[0], 'tag'):
         container.text = top_level_elements.pop(0)
-    container.extend(top_level_elements)
+    try:
+        container.extend(top_level_elements)
+    except AttributeError:  # Not using lxml
+        for e in top_level_elements:
+            container.append(e)
 
-    html_bits = [etree.tostring(elem, method='html', encoding=encoding)
+    #html_bits = [etree.tostring(elem, method='html', encoding=encoding)
+    #                 for elem in container]
+    html_bits = [etree.tostring(elem, encoding=encoding)
                      for elem in container]
 
     return ''.join([escape(container.text or '').encode(encoding)] + html_bits)

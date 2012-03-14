@@ -41,8 +41,17 @@ handler a chance to do something with an element, such as replace it with a
 template tag.
 """
 import re
-from lxml import etree
-from lxml.html import fragments_fromstring
+#try:
+#    from lxml import etree
+#    from lxml.html import fragments_fromstring
+#except ImportError:
+#    import xml.etree.cElementTree as etree
+#    from html5lib.HTMLParser import parseFragment as fragments_fromstring
+import xml.etree.cElementTree as etree
+import html5lib
+html5_parser = html5lib.HTMLParser(tree=html5lib.treebuilders.getTreeBuilder("etree", etree))
+fragments_fromstring = html5_parser.parseFragment
+
 from xml.sax.saxutils import escape
 from HTMLParser import HTMLParser
 from urllib import unquote_plus
@@ -240,7 +249,11 @@ def html_to_template_text(unsafe_html, context=None, render_plugins=True):
     container = etree.Element('div')
     if top_level_elements and not hasattr(top_level_elements[0], 'tag'):
         container.text = top_level_elements.pop(0)
-    container.extend(top_level_elements)
+    try:
+        container.extend(top_level_elements)
+    except AttributeError:  # not uxing lxml
+        for e in top_level_elements:
+            container.append(e)
 
     tree = etree.iterwalk(container, events=('end',))
     # walk over all elements

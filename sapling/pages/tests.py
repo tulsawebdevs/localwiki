@@ -1,7 +1,11 @@
 # coding=utf-8
 
 from urllib import quote
-from lxml.html import fragments_fromstring
+#try:
+#    from lxml.html import fragments_fromstring
+#except ImportError:
+#    from html5lib.HTMLParser import parseFragment as fragments_fromstring
+from html5lib.HTMLParser import parseFragment as fragments_fromstring
 
 from django.test import TestCase
 from django.db import models

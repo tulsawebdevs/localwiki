@@ -1,7 +1,11 @@
 import httplib
 import urlparse
 import html5lib
-import lxml
+#try:
+#    import lxml
+#except ImportError:
+#    import xml.etree.cElementTree as etree
+import xml.etree.cElementTree as etree
 
 from django.conf import settings
 from django.utils.http import urlencode
