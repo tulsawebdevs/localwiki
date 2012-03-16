@@ -6,7 +6,8 @@ from StringIO import StringIO
      # treebuilder = treebuilders.getTreeBuilder("lxml"),
 #except ImportError:
 #    import xml.etree.cElementTree as etree
-import xml.etree.cElementTree as etree
+from utils.xml_support import etree
+#import xml.etree.cElementTree as etree
 import html5lib
 
 treebuilder = html5lib.treebuilders.getTreeBuilder("etree")
@@ -173,9 +174,7 @@ def sanitize_html_fragment(unsafe, allowed_elements=None,
         for e in top_level_elements:
             container.append(e)
 
-    #html_bits = [etree.tostring(elem, method='html', encoding=encoding)
-    #                 for elem in container]
-    html_bits = [etree.tostring(elem, encoding=encoding)
+    html_bits = [etree.tostring(elem, method='html', encoding=encoding)
                      for elem in container]
 
     return ''.join([escape(container.text or '').encode(encoding)] + html_bits)

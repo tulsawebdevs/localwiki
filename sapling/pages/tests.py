@@ -1,11 +1,6 @@
 # coding=utf-8
 
 from urllib import quote
-#try:
-#    from lxml.html import fragments_fromstring
-#except ImportError:
-#    from html5lib.HTMLParser import parseFragment as fragments_fromstring
-from html5lib.HTMLParser import parseFragment as fragments_fromstring
 
 from django.test import TestCase
 from django.db import models
@@ -15,6 +10,8 @@ from django.template.context import Context
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.contrib.gis.geos import GEOSGeometry
+
+from utils.xml_support import fragments_fromstring
 
 from versionutils.merging.forms import MergeMixin
 from forms import PageForm

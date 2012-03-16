@@ -41,17 +41,6 @@ handler a chance to do something with an element, such as replace it with a
 template tag.
 """
 import re
-#try:
-#    from lxml import etree
-#    from lxml.html import fragments_fromstring
-#except ImportError:
-#    import xml.etree.cElementTree as etree
-#    from html5lib.HTMLParser import parseFragment as fragments_fromstring
-import xml.etree.cElementTree as etree
-import html5lib
-html5_parser = html5lib.HTMLParser(tree=html5lib.treebuilders.getTreeBuilder("etree", etree))
-fragments_fromstring = html5_parser.parseFragment
-
 from xml.sax.saxutils import escape
 from HTMLParser import HTMLParser
 from urllib import unquote_plus
@@ -62,6 +51,8 @@ from django.template import Node
 from django.core.urlresolvers import reverse
 from django.utils.text import unescape_entities
 from django.conf import settings
+
+from utils.xml_support import etree, fragments_fromstring
 
 from ckeditor.models import parse_style, sanitize_html_fragment
 from redirects.models import Redirect
@@ -108,15 +99,28 @@ def escape_quotes(s):
     return s.replace('"', '\\"')
 
 
-def insert_text_before(text, elem):
-    prev = elem.getprevious()
+def insert_before(elem, source, parent):
+    index = 0
+    for (i, e) in enumerate(parent):
+        if e == elem:
+            index = i
+            break
+    parent.insert(index, elem)
+
+
+def insert_text_before(text, elem, parent):
+    prev = None
+    for e in parent:
+        if e == elem:
+            break
+        prev = e
     if prev is not None:
         prev.tail = (prev.tail or '') + text
     else:
-        elem.getparent().text = (elem.getparent().text or '') + text
+        parent.text = (parent.text or '') + text
 
 
-def include_page(elem, context=None):
+def include_page(elem, parent, context=None):
     if not 'href' in elem.attrib:
         return
     href = desanitize(elem.attrib['href'])
@@ -135,25 +139,25 @@ def include_page(elem, context=None):
         container.attrib['style'] = 'width: ' + style['width'] + ';'
     tag_text = '{%% include_page %s %%}' % ' '.join(args)
     container.text = tag_text
-    elem.addprevious(container)
-    elem.getparent().remove(elem)
+    insert_before(container, elem, parent)
+    parent.remove(elem)
 
 
-def embed_code(elem, context=None):
+def embed_code(elem, parent, context=None):
     before = '{%% embed_code %%} %s {%% endembed_code %%}' % elem.text
-    insert_text_before(before, elem)
-    elem.getparent().remove(elem)
+    insert_text_before(before, elem, parent)
+    parent.remove(elem)
 
 
-def searchbox(elem, context=None):
+def searchbox(elem, parent, context=None):
     value = elem.attrib.get('value', '')
     before = '{%% searchbox "%s" %%} %s' % (value,
                                             elem.tail or '')
-    insert_text_before(before, elem)
-    elem.getparent().remove(elem)
+    insert_text_before(before, elem, parent)
+    parent.remove(elem)
 
 
-def handle_link(elem, context=None):
+def handle_link(elem, parent, context=None):
     if not 'href' in elem.attrib:
         return
 
@@ -162,12 +166,12 @@ def handle_link(elem, context=None):
     before = '{%% link "%s" %%}' % escape_quotes(href) + (elem.text or '')
     after = '{% endlink %}' + (elem.tail or '')
 
-    insert_text_before(before, elem)
+    insert_text_before(before, elem, parent)
     for child in elem:
-        elem.addprevious(child)
-    insert_text_before(after, elem)
+        insert_before(child, elem, parent)
+    insert_text_before(after, elem, parent)
 
-    elem.getparent().remove(elem)
+    parent.remove(elem)
     return False
 
 
@@ -178,7 +182,7 @@ def file_url_to_name(url):
     return unquote_plus(url.replace(_files_url, '').encode('utf-8'))
 
 
-def handle_image(elem, context=None):
+def handle_image(elem, parent, context=None):
     # only handle resized images
     do_thumbnail = True
     style = parse_style(elem.attrib.get('style', ''))
@@ -207,7 +211,7 @@ def handle_image(elem, context=None):
                                                            width, height)
         after = '{% endthumbnail %}'
         elem.attrib['src'] = '{{ im.url }}'
-        insert_text_before(before, elem)
+        insert_text_before(before, elem, parent)
         elem.tail = after + (elem.tail or '')
     else:
         elem.attrib['src'] = file.file.url
@@ -215,9 +219,11 @@ def handle_image(elem, context=None):
                                                     file.name])
     link = etree.Element('a')
     link.attrib['href'] = info_url
-    elem.addprevious(link)
-    elem.getparent().remove(elem)
+
+    insert_before(link, elem, parent)
+    parent.remove(elem)
     link.append(elem)
+
     return False
 
 
@@ -254,31 +260,38 @@ def html_to_template_text(unsafe_html, context=None, render_plugins=True):
     except AttributeError:  # not uxing lxml
         for e in top_level_elements:
             container.append(e)
+    try:
+        tree = container.iter()
+    except AttributeError:  # Python 2.6 w/o lxml
+        tree = container.getiterator()
 
-    tree = etree.iterwalk(container, events=('end',))
-    # walk over all elements
-    for action, elem in tree:
+    def _process_elem(elem, parent):
+        # TODO: Needs cleanup.
         if 'class' in elem.attrib:
             classes = elem.attrib['class'].split()
             if 'plugin' in classes and render_plugins:
                 for p in classes:
                     if p in plugin_handlers:
                         try:
-                            plugin_handlers[p](elem, context)
+                            plugin_handlers[p](elem, parent, context)
                         except:
                             pass
-            continue
+            return
         if not elem.tag in tag_handlers:
-            continue
+            return
         for handler in tag_handlers[elem.tag]:
             try:
-                can_continue = handler(elem, context)
+                can_continue = handler(elem, parent, context)
                 if can_continue is False:
                     break
             except:
                 pass
 
-    template_bits = [etree.tostring(elem, encoding='UTF-8')
+    for parent in tree:
+        for elem in parent:
+            _process_elem(elem, parent)
+
+    template_bits = [etree.tostring(elem, encoding='UTF-8', method='html')
                      for elem in container]
     container_text = escape(container.text or '').encode('UTF-8')
     return sanitize_final(''.join(tag_imports +
@@ -371,7 +384,8 @@ class EmbedCodeNode(Node):
             for elem in top_level_elements:
                 if elem.tag == 'iframe':
                     elem = self._process_iframe(elem)
-                out.append(etree.tostring(elem, encoding='UTF-8'))
+                out.append(
+                    etree.tostring(elem, encoding='UTF-8', method='html'))
             return ''.join(out)
 
         except IFrameSrcNotApproved:

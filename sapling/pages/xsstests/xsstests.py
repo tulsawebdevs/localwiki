@@ -1,9 +1,6 @@
 import urllib2
-#try:
-#    from lxml import etree
-#except:
-#    import xml.etree.cElementTree as etree
-import xml.etree.cElementTree as etree
+
+from utils.xml_support import etree
 
 
 def load_url(url):

@@ -1,14 +1,17 @@
 import httplib
 import urlparse
 import html5lib
+
+from utils.xml_support import etree
 #try:
 #    import lxml
 #except ImportError:
 #    import xml.etree.cElementTree as etree
-import xml.etree.cElementTree as etree
+#import xml.etree.cElementTree as etree
 
 from django.conf import settings
 from django.utils.http import urlencode
+import lxml
 from lxml import etree
 
 DAISYDIFF_URL = getattr(settings, 'DAISYDIFF_URL',
@@ -72,16 +75,15 @@ def daisydiff_merge(field1, field2, ancestor, service_url=DAISYDIFF_MERGE_URL):
 
 
 def extract_merge(xml):
-    doc = lxml.etree.fromstring(xml)
+    doc = etree.fromstring(xml)
     # remove repeating conflict messages
     last_conflict_message = None
-    tree = etree.iterwalk(doc)
-    for action, elem in tree:
+    for elem in doc.iter():
         if elem.tag == 'strong' and elem.attrib.get('class') == 'editConflict':
             if elem.text == last_conflict_message:
                 elem.getparent().remove(elem)
             last_conflict_message = elem.text
-    body_list = [lxml.etree.tostring(child, method='html', encoding='UTF-8')
+    body_list = [etree.tostring(child, method='html', encoding='UTF-8')
                                  for child in doc.find('body')]
     body = ''.join(body_list)
     has_conflict = 'true' in doc.find('conflict').text
