@@ -10,11 +10,11 @@ These packages are much easier to keep updated.
 The following install instructions are geared for development setups or non-Ubuntu
 installs.
 
-1.  Prerequisites: solr + jetty, python imaging library, python lxml bindings,
-python-setuptools, virtualenv, gdal, postgresql with postgis.  Here's how we
-get these packages in Ubuntu 10.04 LTS:
+1.  Prerequisites: solr + jetty, python imaging library, python-setuptools,
+virtualenv, gdal, postgresql with postgis.  Here's how we get these packages in
+Ubuntu 10.04 LTS:
 
-    $ sudo apt-get install python-setuptools solr-jetty python-lxml python-imaging
+    $ sudo apt-get install python-setuptools solr-jetty python-imaging
     $ sudo apt-get install gdal-bin proj python-psycopg2
     $ sudo easy_install --upgrade virtualenv
 
@@ -91,6 +91,7 @@ Help us document this stuff!  Add something to https://dev.localwiki.org or
 the github wiki.
 
 == Database Note ==
+
 This setup assumes we're using PostgreSQL and its geographic companion,
 PostGIS.  You should in theory be able to use any supported Django database.
 If you'd like to do something more specialized, please see the general Django
@@ -101,4 +102,12 @@ http://docs.djangoproject.com/en/dev/topics/install/
 and the GeoDjango install instructions here:
 
 http://docs.djangoproject.com/en/dev/ref/contrib/gis/install/
--------------------------------------------------------------------------------
+
+== Optional packages ==
+
+There are a few optional packages that will allow localwiki to run a bit
+better if installed.
+
+ - lxml.  In Ubuntu:
+
+    $ sudo apt-get install python-lxml
