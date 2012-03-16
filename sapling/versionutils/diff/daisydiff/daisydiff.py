@@ -3,16 +3,9 @@ import urlparse
 import html5lib
 
 from utils.xml_support import etree
-#try:
-#    import lxml
-#except ImportError:
-#    import xml.etree.cElementTree as etree
-#import xml.etree.cElementTree as etree
 
 from django.conf import settings
 from django.utils.http import urlencode
-import lxml
-from lxml import etree
 
 DAISYDIFF_URL = getattr(settings, 'DAISYDIFF_URL',
     'http://localhost:8080/diff')
