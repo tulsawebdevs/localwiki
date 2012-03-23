@@ -1,7 +1,11 @@
 {% extends "tags/base.html" %}
+{% load noun_icon %}
 
 {% block title %}Tags / {{ tag_name }} - {{ block.super }}{% endblock %}
-{% block header_title %}<a href="{% url tags:list %}">Tags</a> / {{ tag_name }}{% endblock %}
+{% block header_title %}
+<div style="position: absolute; margin-left: -50px; margin-top: -10px;">{% noun_icon tag_name width="35px" %}</div>
+<a href="{% url tags:list %}">Tags</a> / {{ tag_name }}
+{% endblock %}
 
 {% block media %}
   {{ block.super }}

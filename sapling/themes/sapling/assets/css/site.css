@@ -145,8 +145,6 @@ textarea, input, select {
 }
 /* Header is different on tag pages */
 .tagpage #header_bar {
-    padding-left: 3.5em;
-    background: url(../img/tag-icon.png) 0.75em 45% no-repeat;
 }
 
 #object_title {

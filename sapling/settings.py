@@ -214,6 +214,7 @@ INSTALLED_APPS = (
     'guardian',
     'south',
     'honeypot',
+    'noun_project',
 
     # Our apps
     'versionutils.versioning',

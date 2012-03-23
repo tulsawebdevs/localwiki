@@ -130,6 +130,7 @@ install_requires = [
     'django-registration==0.8.0-alpha-1',
     'django-olwidget==0.46-custom1',
     'django-honeypot==0.3.0-custom',
+    'django-noun-project',
 ]
 if int(os.getenv('DISABLE_INSTALL_REQUIRES', '0')):
     install_requires = None
