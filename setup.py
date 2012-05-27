@@ -115,7 +115,7 @@ def gen_data_files(*dirs):
 
 install_requires = [
     'setuptools',
-    'django==1.3',
+    'django>=1.3',
     'html5lib==0.95',
     'sorl-thumbnail==11.12',
     'python-dateutil==1.5',
