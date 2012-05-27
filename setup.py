@@ -127,7 +127,7 @@ install_requires = [
     'python-flot-utils==0.2.1',
     'django-staticfiles==1.2.1',
     'django-registration==0.8.0',
-    'django-olwidget==0.46-custom1',
+    'django-olwidget>=0.46-custom1',
     'django-honeypot==0.3.0-custom',
     # Actually optional:
     'Sphinx==1.1.3',
